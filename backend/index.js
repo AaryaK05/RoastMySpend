@@ -1,12 +1,60 @@
 const express=require('express');
 require('dotenv').config();
+const axios=require('axios');
+const cors=require('cors');
+
 
 const app=express();
+app.use(express.json());
+app.use(express.urlencoded({extended:true}));
+app.use(cors());
 const port=process.env.PORT;
 
 app.get("/",(req,res)=>{
     res.send("Hello!");
 })
+
+function classifyCategory(cat){
+    const data={
+        "ZOMATO":"food",
+        "BLINKIT":"food",
+        "SWIGGY":"food",
+        "NETFLIX":"entertainment",
+    }
+
+    const res=data[cat] || "other";
+
+    return res;
+}
+
+app.post('/sms-data',(req,res)=>{
+    console.log(req.body);
+    const{message,time}=req.body;
+
+    if(!message || typeof message!="string"){
+        res.status(404).json({error:"Invalid Data!"});
+    }
+
+    const amount=message.match(/Rs. (\d+)/i)?.[1] || '0';
+    const merchant=message.match(/to ([A-Z]+)/i)?.[1] || 'Unknown';
+
+    const category=classifyCategory(merchant);
+    const money=parseInt(amount);
+
+
+    console.log("Amount:",amount);
+    console.log("Merchant:",merchant);
+    console.log("Category:",category);
+
+    const data={
+        "money":money,
+        "category":category
+    }
+    res.json(data).status(200);
+})
+
+
+
 
 app.listen(port,(req,res)=>{
     console.log(`Server listening on port ${port}`);
