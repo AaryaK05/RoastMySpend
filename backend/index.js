@@ -12,6 +12,8 @@ const io = new Server(server, {
   cors: {
     origin: ["http://localhost:5173", "https://roast-my-spend.vercel.app"],
     methods: ["GET", "POST"],
+    credentials:true,
+    allowedHeaders:"*"
   },
 });
 
@@ -19,6 +21,9 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(cors({
     origin: ["http://localhost:5173", "https://roast-my-spend.vercel.app"],
+    methods: ["GET", "POST", "OPTIONS"],
+    credentials: true,
+    allowedHeaders:"*"
   }));
 const port=process.env.PORT;
 
