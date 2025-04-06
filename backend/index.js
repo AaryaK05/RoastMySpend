@@ -15,6 +15,7 @@ const io = new Server(server, {
   },
 });
 
+app.use(res.setHeader('Access-Control-Allow-Origin', '*'));
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(cors({
