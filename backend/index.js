@@ -44,7 +44,7 @@ function classifyCategory(cat){
 }
 
 app.post('/sms-data',(req,res)=>{
-    console.log(req.body);
+    console.log("Message Received");
     const{message,time}=req.body;
 
     if(!message || typeof message!="string"){
@@ -57,10 +57,7 @@ app.post('/sms-data',(req,res)=>{
     const category=classifyCategory(merchant);
     const money=parseInt(amount);
 
-
-    console.log("Amount:",amount);
     console.log("Merchant:",merchant);
-    console.log("Category:",category);
 
     const data={
         "money":money,
