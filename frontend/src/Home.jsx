@@ -6,7 +6,7 @@ import {saveData,loadData,getAllTransactions,clearAllTransactions} from "./utils
 
 ChartJS.register(ArcElement,Tooltip,Legend,CategoryScale,LinearScale,BarElement);
 
-const BACKEND_URL = "https://roast-my-spend-backend.vercel.app";
+const BACKEND_URL = "https://roast-my-spend-backend.onrender.com";
 
 const socket = io(`${BACKEND_URL}`);
 
