@@ -11,8 +11,8 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'Task Manager PWA',
-        short_name: 'Tasks',
+        name: 'Roast My Spend PWA',
+        short_name: 'RoastMySpend',
         start_url: '/',
         display: 'standalone',
         background_color: '#ffffff',
