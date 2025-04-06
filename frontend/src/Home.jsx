@@ -24,6 +24,8 @@ function Home() {
   const remaining = limit - amount;
 
   useEffect(() => {
+    Notification.requestPermission();
+
     if (navigator.storage?.persist) {
       navigator.storage.persist().then((granted) => {
         console.log("Persistent storage granted:", granted);
@@ -48,54 +50,55 @@ function Home() {
 
     loadInitialData();
 
-    const handleTransaction = async (data) => {
-      try {
-        const newAmount = amount + data.money;
-        const newTransaction = {
-          amount: data.money,
-          category: data.category,
-          date: new Date().toISOString(),
-        };
-
-        console.log("Updating with:", {
-          limit,
-          currentAmount: amount,
-          newTransaction: data.money,
-          newTotal: newAmount,
-          remaining: limit - newAmount,
-        });
-
-
-        setAmount(prev => prev + data.money);
-        console.log(amount);
-        setTransactions((prev) => [...prev, newTransaction]);
-
-        await Promise.all([
-          saveData("amount", newAmount),
-          saveData(`tx_${Date.now()}`, newTransaction),
-        ]);
-
-        setCategoryMap(prev => {
-          const newMap = new Map(prev);
-          const currentCount = newMap.get(data.category) || 0;
-          newMap.set(data.category, currentCount + 1); 
-          return newMap;
-        });
-      } catch (error) {
-        console.error("Transaction error:", error);
-      }
-    };
-
     socket.on("updateUI", handleTransaction);
-
-
+      
     return () => {
       socket.off("updateUI", handleTransaction);
     };
-  }, []); 
+  }, []);
+
+  
+
+  const handleTransaction = async (data) => {
+    try {
+      
+      const newAmount = amount + data.money;
+
+      const newTransaction = {
+        amount: data.money,
+        category: data.category,
+        date: new Date().toISOString(),
+      };
+
+      setAmount(prev => prev + data.money);
+      setTransactions((prev) => [...prev, newTransaction]);
+
+      await Promise.all([
+        saveData("amount", newAmount),
+        saveData(`tx_${Date.now()}`, newTransaction),
+      ]);
+
+      setCategoryMap(prev => {
+        const newMap = new Map(prev);
+        const currentCount = newMap.get(data.category) || 0;
+        newMap.set(data.category, currentCount + 1); 
+        return newMap;
+      });
+
+      checkLimit();
+    } catch (error) {
+      console.error("Transaction error:", error);
+    }
+  };
 
 
   useEffect(() => {
+    if (Notification.permission === "granted") {
+      if(amount>=limit){
+        alert(`🚨 Limit blown! Online Money Spending addict detected!`);
+      }
+    } 
+
     const saveAllData = async () => {
       try {
         await Promise.all([
@@ -154,6 +157,14 @@ function Home() {
       console.error("Reset failed:", err);
     }
   };
+
+  const checkLimit=()=>{
+    if(amount>=limit){
+      new Notification("💰 Limit Exhausted!", { 
+        body: `You glutton! Spent mostly on Zomato.` 
+      });
+    }
+  }
 
   return (
     <div className=" flex flex-col text-center">

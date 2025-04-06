@@ -10,16 +10,15 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: process.env.FRONTEND_URL,
+    origin: ["http://localhost:5173", "https://roast-my-spend.vercel.app"],
     methods: ["GET", "POST"],
   },
 });
 
-app.use(res.setHeader('Access-Control-Allow-Origin', '*'));
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(cors({
-    origin: process.env.FRONTEND_URL
+    origin: ["http://localhost:5173", "https://roast-my-spend.vercel.app"],
   }));
 const port=process.env.PORT;
 
